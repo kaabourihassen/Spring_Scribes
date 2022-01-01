@@ -1,6 +1,7 @@
 package com.socialmedia.scribes.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
@@ -37,6 +38,7 @@ public class Post {
 
     @DBRef
     @Indexed
+    @JsonIgnore
     private User user;
 
     @DBRef

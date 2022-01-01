@@ -21,10 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
+@CrossOrigin()
 @RestController
 public class UserController {
-
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -74,7 +74,7 @@ public class UserController {
     public User getUserById(@PathVariable ObjectId userId){
         return userService.getUserById(userId);
     }
-    @PostMapping(path = "/user")
+    @PutMapping(path = "/user/updateUser")
     public User UpdateUser(@RequestBody User user){
         return userService.changeGeneralInfo(user);
     }
