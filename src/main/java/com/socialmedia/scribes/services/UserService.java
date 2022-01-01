@@ -2,9 +2,7 @@ package com.socialmedia.scribes.services;
 
 import com.socialmedia.scribes.entities.ConfirmationToken;
 import com.socialmedia.scribes.entities.User;
-import com.socialmedia.scribes.entities.UserImage;
 import com.socialmedia.scribes.repositories.EmailSender;
-import com.socialmedia.scribes.repositories.UserImageRepository;
 import com.socialmedia.scribes.repositories.UserRepository;
 import com.socialmedia.scribes.sec.jwt.JwtUtils;
 import org.bson.types.ObjectId;
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,9 +35,7 @@ public class UserService implements UserDetailsService {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private ConfirmationTokenService confirmationTokenService;
-    @Autowired
-    private UserImageRepository userImageRepository;
-    private static final String UPLOAD_DIR =".\\src\\main\\resources\\static\\userImages\\";
+    private static final String UPLOAD_DIR =".\\src\\main\\resources\\static\\imagesuploads\\userImages\\";
 
 
 
@@ -119,37 +114,25 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(userId);
     }
 
-    public ResponseEntity uploadUserProfileImage(User user, MultipartFile file) {
-        try {
-                InputStream inputStream = file.getInputStream();
-                OutputStream outputStream = new FileOutputStream(new File(UPLOAD_DIR + file.getOriginalFilename()));
-                int read = 0;
-                byte[] bytes = new byte[1024];
+    private String randomName(){
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "abcdefghijklmnopqrstuvxyz";
 
-                while((read = inputStream.read(bytes)) != -1 ){
-                    outputStream.write(bytes,0,read);
-                }
-                outputStream.flush();
-                outputStream.close();
+        StringBuilder sb = new StringBuilder(10);
 
-                UserImage photo = new UserImage();
-                photo.setTitle(file.getOriginalFilename());
-                photo.setFile(file.getBytes());
-                userImageRepository.save(photo);
+        for (int i = 0; i < 10; i++) {
+            int index = (int)(AlphaNumericString.length() * Math.random());
 
-
-            user.setProfilePic(photo);
-            userRepository.save(user);
-            return new ResponseEntity(HttpStatus.CREATED);
-        }catch (IOException e){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            sb.append(AlphaNumericString
+                    .charAt(index));
         }
-
+        return sb.toString();
     }
-    public ResponseEntity uploadUserCoverImage(User user, MultipartFile file) {
+    public ResponseEntity uploadUserProfileImage(User user, MultipartFile file) {
+
         try {
+            String nameR = randomName();
             InputStream inputStream = file.getInputStream();
-            OutputStream outputStream = new FileOutputStream(new File(UPLOAD_DIR + file.getOriginalFilename()));
+            OutputStream outputStream = new FileOutputStream(new File(UPLOAD_DIR +nameR+ file.getOriginalFilename()));
             int read = 0;
             byte[] bytes = new byte[1024];
 
@@ -159,13 +142,33 @@ public class UserService implements UserDetailsService {
             outputStream.flush();
             outputStream.close();
 
-            UserImage photo = new UserImage();
-            photo.setTitle(file.getOriginalFilename());
-            photo.setFile(file.getBytes());
-            userImageRepository.save(photo);
+            user.setProfilePic(UPLOAD_DIR +nameR+ file.getOriginalFilename());
+            userRepository.save(user);
+            System.out.println(user);
+            return new ResponseEntity(HttpStatus.OK);
+        }catch (IOException e){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    public ResponseEntity uploadUserCoverImage(User user, MultipartFile file) {
+
+        try {
+            String nameR = randomName();
+            InputStream inputStream = file.getInputStream();
+            OutputStream outputStream = new FileOutputStream(new File(UPLOAD_DIR +nameR+ file.getOriginalFilename()));
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while((read = inputStream.read(bytes)) != -1 ){
+                outputStream.write(bytes,0,read);
+            }
+            outputStream.flush();
+            outputStream.close();
 
 
-            user.setCoverPic(photo);
+
+            user.setCoverPic(UPLOAD_DIR +nameR+ file.getOriginalFilename());
             userRepository.save(user);
             return new ResponseEntity(HttpStatus.CREATED);
         }catch (IOException e){

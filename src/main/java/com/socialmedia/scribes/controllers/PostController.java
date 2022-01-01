@@ -27,6 +27,7 @@ public class PostController {
     @Autowired
     private UserService userService;
     private UserRepository userRepository;
+    @Autowired
     JwtUtils jwtUtils;
     @Autowired
     AuthTokenFilter authTokenFilter;

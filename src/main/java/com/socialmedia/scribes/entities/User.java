@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Document(collection = "users")
@@ -35,17 +36,15 @@ public class User implements UserDetails {
     @Field(value = "password")
     private String password;
     @Field(value = "created_at")
-    private Date created_at;
+    private LocalDateTime created_at;
     @Field(value = "enabled")
     private boolean enabled=false;
     @Field(value = "locked")
     private boolean locked;
     @Field(value = "bio")
     private String bio;
-    @DBRef
-    private UserImage profilePic;
-    @DBRef
-    private UserImage coverPic;
+    private String profilePic;
+    private String coverPic;
     @Field(value = "address")
     private String address;
     @Field(value = "phone")
@@ -79,8 +78,8 @@ public class User implements UserDetails {
         this.role=Role.USER;
     }
 
-    public User(String fullName, String email, String password, Date created_at, boolean enabled, boolean locked, String bio,
-                UserImage profilePic, UserImage coverPic, String address, String phone, Set<Role> roles,
+    public User(String fullName, String email, String password, LocalDateTime created_at, boolean enabled, boolean locked, String bio,
+                String profilePic, String coverPic, String address, String phone, Set<Role> roles,
                 Set<User> followers, Set<Category> favoriteCategories, Set<Post> post) {
         this.fullName = fullName;
         this.email = email;

@@ -83,10 +83,7 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
-    @PostMapping(path = "/user/uploadProfilePic",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(path = "/user/uploadProfilePic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void uploadUserProfileImage(HttpServletRequest request, @RequestParam("file") MultipartFile file){
         String token = authTokenFilter.parseJwt(request);
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));

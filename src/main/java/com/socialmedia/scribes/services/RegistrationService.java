@@ -59,6 +59,7 @@ public class RegistrationService {
             user.setRole(Role.USER);
             user.setEnabled(false);
             user.setLocked(true);
+            user.setCreated_at(LocalDateTime.now());
 
             userRepository.save(user);
 
