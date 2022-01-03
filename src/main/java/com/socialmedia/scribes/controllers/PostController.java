@@ -41,16 +41,16 @@ public class PostController {
         return postService.getPostById(postId);
     }
     @PostMapping(path ="/post")
-    public ResponseEntity createPost(HttpServletRequest request,@RequestPart("post") Post post, @Nullable @RequestParam("file") MultipartFile[] multipartFileLst){
+    public ResponseEntity createPost(HttpServletRequest request,@RequestPart("post") Post post, @Nullable @RequestParam("file") MultipartFile multipartFile){
         String token = authTokenFilter.parseJwt(request);
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
-        return postService.createPost(user,post,multipartFileLst);
+        return postService.createPost(user,post,multipartFile);
     }
     @PutMapping(path ="/post")
-    public ResponseEntity updatePost(HttpServletRequest request,@RequestPart("post") Post post, @Nullable @RequestParam("file") MultipartFile[] multipartFileLst){
+    public ResponseEntity updatePost(HttpServletRequest request,@RequestPart("post") Post post, @Nullable @RequestParam("file") MultipartFile multipartFile){
         String token = authTokenFilter.parseJwt(request);
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
-        return postService.updatePost(user,post,multipartFileLst);
+        return postService.updatePost(user,post,multipartFile);
     }
     @DeleteMapping(path ="/post")
     public void deletePost(@RequestParam ObjectId postId){

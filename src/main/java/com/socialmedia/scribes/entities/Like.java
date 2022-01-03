@@ -22,15 +22,15 @@ public class Like {
     private ObjectId likeId;
     @Indexed
     @Field(value = "user_id")
-    @DBRef
-    private User user;
+    @JsonSerialize(using= ToStringSerializer.class)
+    private ObjectId userId;
     @Indexed
     @Field(value = "post")
-    @DBRef
-    private Post post;
+    @JsonSerialize(using= ToStringSerializer.class)
+    private ObjectId postId;
 
-    public Like(User user, Post post) {
-        this.user = user;
-        this.post = post;
+    public Like(ObjectId userId, ObjectId postId) {
+        this.userId = userId;
+        this.postId = postId;
     }
 }

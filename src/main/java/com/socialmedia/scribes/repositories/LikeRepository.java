@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LikeRepository extends MongoRepository<Like, ObjectId> {
-    Like findLikeByUserAndPost(User user, Post post);
+    Like findLikeByUserIdAndPostId(ObjectId userId, ObjectId postId);
+    void deleteLikeByUserIdAndPostId(ObjectId userId,ObjectId postId);
 }

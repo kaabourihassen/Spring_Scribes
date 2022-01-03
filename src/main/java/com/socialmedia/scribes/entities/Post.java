@@ -31,12 +31,11 @@ public class Post {
     @Field(value = "createDate")
     private LocalDateTime createDate;
     @DBRef
-    private List<PostThumbnail> pictures;
+    private String thumbnail;
     @DBRef
     private List<Comment> comments;
     @DBRef
     @Indexed
-    @JsonIgnore
     private User user;
     @DBRef
     @Indexed

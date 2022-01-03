@@ -4,6 +4,7 @@ import com.socialmedia.scribes.entities.Category;
 import com.socialmedia.scribes.repositories.CategoryRepository;
 import org.bson.types.ObjectId;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Service
 public class CategoryService {
 
+    @Autowired
     private CategoryRepository categoryRepository;
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();

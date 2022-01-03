@@ -93,7 +93,7 @@ public class UserController {
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
         userService.uploadUserProfileImage(user,file);
     }
-    @GetMapping(path = "/getProfilePic")
+    @GetMapping(path = "/user/getProfilePic")
     public byte[] getProfilePic(HttpServletRequest request) throws IOException {
         String token = authTokenFilter.parseJwt(request);
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
@@ -104,5 +104,11 @@ public class UserController {
         String token = authTokenFilter.parseJwt(request);
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
         userService.uploadUserCoverImage(user,file);
+    }
+    @PostMapping(path = "/user/follow/{userId}")
+    public User follow(HttpServletRequest request,@PathVariable ObjectId userId){
+        String token = authTokenFilter.parseJwt(request);
+        User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
+        return userService.follow(user,userId);
     }
 }

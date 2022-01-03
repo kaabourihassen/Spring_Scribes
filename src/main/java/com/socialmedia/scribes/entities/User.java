@@ -1,5 +1,6 @@
 package com.socialmedia.scribes.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -34,12 +34,15 @@ public class User implements UserDetails {
     @Indexed
     private String email;
     @Field(value = "password")
+    @JsonIgnore
     private String password;
     @Field(value = "created_at")
     private LocalDateTime created_at;
     @Field(value = "enabled")
+    @JsonIgnore
     private boolean enabled=false;
     @Field(value = "locked")
+    @JsonIgnore
     private boolean locked;
     @Field(value = "bio")
     private String bio;
@@ -52,23 +55,26 @@ public class User implements UserDetails {
 
     private Role role;
 
-
-    @DBRef
-    private Set<User> followers = new HashSet<>();
+    @JsonSerialize(using= ToStringSerializer.class)
+    private Set<ObjectId> follows = new HashSet<>();
 
     @DBRef
     private Set<Category> favoriteCategories = new HashSet<>();
 
     @DBRef
+    @JsonIgnore
     private Set<Post> posts = new HashSet<>();
 
     @DBRef
+    @JsonIgnore
     private Set<Post> post= new HashSet<>();
 
     @DBRef
+    @JsonIgnore
     private Set<Comment> comments= new HashSet<>();
     @Field(value = "likes")
     @DBRef
+    @JsonIgnore
     private List<Like> likes;
 
     public User(String fullName, String email, String password) {
@@ -80,7 +86,7 @@ public class User implements UserDetails {
 
     public User(String fullName, String email, String password, LocalDateTime created_at, boolean enabled, boolean locked, String bio,
                 String profilePic, String coverPic, String address, String phone, Set<Role> roles,
-                Set<User> followers, Set<Category> favoriteCategories, Set<Post> post) {
+                 Set<Category> favoriteCategories, Set<Post> post) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
@@ -93,7 +99,6 @@ public class User implements UserDetails {
         this.address = address;
         this.phone = phone;
         this.role = role;
-        this.followers = followers;
         this.favoriteCategories = favoriteCategories;
         this.post = post;
     }
