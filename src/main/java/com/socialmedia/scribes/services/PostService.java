@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +49,7 @@ public class PostService {
             post1.setTitle(post.getTitle());
             post1.setContent(post.getContent());
             post1.setCategories(post.getCategories());
+            post1.setCreateDate(LocalDateTime.now());
             post1.setUser(user);
             postRepository.save(post1);
             return new ResponseEntity(HttpStatus.CREATED);
@@ -58,6 +60,7 @@ public class PostService {
                 post1.setTitle(post.getTitle());
                 post1.setContent(post.getContent());
                 post1.setCategories(post.getCategories());
+                post1.setCreateDate(LocalDateTime.now());
                 post1.setUser(user);
                 for(MultipartFile multipartFile : multipartFileLst){
 
@@ -97,6 +100,8 @@ public class PostService {
                 post1.setPostId(post.getPostId());
                 post1.setTitle(post.getTitle());
                 post1.setContent(post.getContent());
+                post1.setComments(post.getComments());
+                post1.setLikes(post.getLikes());
                 post1.setCategories(post.getCategories());
                 postRepository.save(post1);
                 return new ResponseEntity(HttpStatus.CREATED);

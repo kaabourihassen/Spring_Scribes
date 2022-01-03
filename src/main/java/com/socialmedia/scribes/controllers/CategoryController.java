@@ -10,14 +10,15 @@ import java.util.List;
 
 @RestController
 public class CategoryController {
-
+    @Autowired
     private CategoryService categoryService;
+
     @GetMapping(path = "/categories")
     public List<Category> getAllCategories(){
         return categoryService.getAllCategories();
     }
-    @GetMapping(path ="/category")
-    public Category getCategoryById(@RequestParam ObjectId categoryId){
+    @GetMapping(path ="/category/{categoryId}")
+    public Category getCategoryById(@PathVariable ObjectId categoryId){
         return categoryService.getCategoryById(categoryId);
     }
     @PostMapping(path ="/category")

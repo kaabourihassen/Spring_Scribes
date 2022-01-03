@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,10 +93,13 @@ public class UserController {
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
         userService.uploadUserProfileImage(user,file);
     }
-    @PostMapping(path = "/user/uploadCoverPic",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @GetMapping(path = "/getProfilePic")
+    public byte[] getProfilePic(HttpServletRequest request) throws IOException {
+        String token = authTokenFilter.parseJwt(request);
+        User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
+        return Files.readAllBytes(Path.of(user.getProfilePic()));
+    }
+    @PostMapping(path = "/user/uploadCoverPic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void uploadUserCoverImage(HttpServletRequest request,@RequestParam("file") MultipartFile file){
         String token = authTokenFilter.parseJwt(request);
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));

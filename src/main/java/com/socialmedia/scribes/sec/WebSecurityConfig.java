@@ -54,8 +54,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.authorizeRequests().antMatchers("/auth/**","/register/**").permitAll()
-			.antMatchers("users").hasAuthority("ADMIN")
-			.antMatchers("/posts/**","/post/**","/user/**").hasAnyAuthority("USER","ADMIN")
+			.antMatchers("/users").hasAuthority("ADMIN")
+			.antMatchers("/posts/**","/post/**","/user/**","/categories","/category/**").hasAnyAuthority("USER","ADMIN")
 			.anyRequest().authenticated();
 
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

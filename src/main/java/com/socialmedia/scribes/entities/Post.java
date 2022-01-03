@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -28,23 +29,18 @@ public class Post {
     @Field(value = "content")
     private String content;
     @Field(value = "createDate")
-    private Date createDate;
-
+    private LocalDateTime createDate;
     @DBRef
     private List<PostThumbnail> pictures;
-
     @DBRef
     private List<Comment> comments;
-
     @DBRef
     @Indexed
     @JsonIgnore
     private User user;
-
     @DBRef
     @Indexed
     private Set<Category> categories = new HashSet<>();
-
     @DBRef
     private Set<Like> likes = new HashSet<>();
 
