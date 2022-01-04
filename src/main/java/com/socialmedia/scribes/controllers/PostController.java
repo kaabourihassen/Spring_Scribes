@@ -40,14 +40,24 @@ public class PostController {
     public Post getPostById(@PathVariable ObjectId postId){
         return postService.getPostById(postId);
     }
+    @GetMapping(path = "/posts/{userId}")
+    public List<Post> getPostsByUser(@PathVariable ObjectId userId){
+        return postService.getPostsByUser(userId);
+    }
     @PostMapping(path ="/post")
-    public ResponseEntity createPost(HttpServletRequest request,@RequestPart("post") Post post, @Nullable @RequestParam("file") MultipartFile multipartFile){
+    public Post createPost(HttpServletRequest request,@RequestPart("post") Post post, @Nullable @RequestParam("file") MultipartFile multipartFile){
         String token = authTokenFilter.parseJwt(request);
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
         return postService.createPost(user,post,multipartFile);
     }
+    @DeleteMapping(path = "/post/comment/{commentId}")
+    public void deleteComment(HttpServletRequest request,@PathVariable ObjectId commentId){
+        String token = authTokenFilter.parseJwt(request);
+        User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
+        postService.deleteComment(user,commentId);
+    }
     @PutMapping(path ="/post")
-    public ResponseEntity updatePost(HttpServletRequest request,@RequestPart("post") Post post, @Nullable @RequestParam("file") MultipartFile multipartFile){
+    public Post updatePost(HttpServletRequest request,@RequestPart("post") Post post, @Nullable @RequestParam("file") MultipartFile multipartFile){
         String token = authTokenFilter.parseJwt(request);
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
         return postService.updatePost(user,post,multipartFile);

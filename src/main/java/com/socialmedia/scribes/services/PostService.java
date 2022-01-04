@@ -1,9 +1,11 @@
 package com.socialmedia.scribes.services;
 
+import com.mongodb.lang.Nullable;
 import com.socialmedia.scribes.entities.*;
 import com.socialmedia.scribes.repositories.CommentRepository;
 import com.socialmedia.scribes.repositories.LikeRepository;
 import com.socialmedia.scribes.repositories.PostRepository;
+import com.socialmedia.scribes.repositories.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,8 @@ public class PostService {
     CommentRepository commentRepository;
     @Autowired
     LikeRepository likeRepository;
+    @Autowired
+    private UserRepository userRepository;
     private static  String UPLOAD_DIR =".\\src\\main\\resources\\static\\imagesuploads\\postImages\\";
     public List<Post> getAllPosts() {
         return postRepository.findAll();
@@ -53,7 +57,7 @@ public class PostService {
         return sb.toString();
     }
 
-    public ResponseEntity createPost(User user, Post post, MultipartFile multipartFile) {
+    public Post createPost(User user, Post post,@Nullable MultipartFile multipartFile) {
         if (multipartFile == null){
             Post post1 =new Post();
             post1.setTitle(post.getTitle());
@@ -62,7 +66,7 @@ public class PostService {
             post1.setCreateDate(LocalDateTime.now());
             post1.setUser(user);
             postRepository.save(post1);
-            return new ResponseEntity(HttpStatus.CREATED);
+            return postRepository.save(post1);
         }else {
             String nameR = randomName();
             try {
@@ -85,15 +89,16 @@ public class PostService {
 
                 post1.setThumbnail(UPLOAD_DIR + multipartFile.getOriginalFilename());
 
-                postRepository.save(post1);
-                return new ResponseEntity(HttpStatus.CREATED);
+
+
+                return postRepository.save(post1);
             }catch (IOException e){
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                return null;
             }
         }
     }
 
-    public ResponseEntity updatePost(User user,Post post, MultipartFile multipartFile) {
+    public Post updatePost(User user,Post post,@Nullable MultipartFile multipartFile) {
         if(user.getEmail().equals(post.getUser().getEmail())){
             if (multipartFile == null){
                 Post post1 =new Post();
@@ -104,7 +109,7 @@ public class PostService {
                 post1.setLikes(post.getLikes());
                 post1.setCategories(post.getCategories());
                 postRepository.save(post1);
-                return new ResponseEntity(HttpStatus.CREATED);
+                return postRepository.save(post1);
             }else {
                 try {
                     String nameR = randomName();
@@ -127,14 +132,14 @@ public class PostService {
 
 
                     post1.setThumbnail(UPLOAD_DIR +nameR+ multipartFile.getOriginalFilename());
-                    postRepository.save(post1);
-                    return new ResponseEntity(HttpStatus.CREATED);
+
+                    return postRepository.save(post1);
                 }catch (IOException e){
-                    return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                    return null;
                 }
             }
         }else{
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return null;
         }
 
     }
@@ -145,18 +150,18 @@ public class PostService {
 
     public Post createComment(User user,ObjectId postId, Comment comment){
         Post post = postRepository.findById(postId).orElseThrow(()-> new UsernameNotFoundException(String.format("Post not found")));
-        post.setComments((List<Comment>) comment);
+        Set<Comment> comments = post.getComments();
+        comments.add(comment);
+        post.setComments(comments);
         comment.setUser(user);
         commentRepository.save(comment);
         return postRepository.save(post);
     }
     public Post createLike(User user,ObjectId postId){
-
         Post post = postRepository.findById(postId).orElseThrow(()-> new UsernameNotFoundException(String.format("Post not found")));
         Like like = likeRepository.findLikeByUserIdAndPostId(user.getUserId(),postId);
         if (like != null){
             Set<Like> likes = post.getLikes();
-            int i = 0;
             for (Like l :likes){
                 if (l.getLikeId().equals(like.getLikeId())){
                     likes.remove(l);
@@ -164,8 +169,6 @@ public class PostService {
                     return postRepository.save(post);
                 }
             }
-
-
         }else {
             Like like1 = new Like(user.getUserId(),postId);
             likeRepository.save(like1);
@@ -178,4 +181,15 @@ public class PostService {
         return  postRepository.save(post);
     }
 
+    public List<Post> getPostsByUser(ObjectId userId) {
+        User user= userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException(String.format("user not found")));
+        return postRepository.findPostsByUser(user);
+    }
+
+    public void deleteComment(User user,ObjectId commentId) {
+         Comment comment= commentRepository.findById(commentId).orElseThrow(()-> new UsernameNotFoundException(String.format("comment not found")));
+        if(user.getUserId().equals(comment.getUser().getUserId())){
+            commentRepository.deleteById(commentId);
+        }
+    }
 }

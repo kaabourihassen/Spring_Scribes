@@ -20,6 +20,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -89,9 +90,8 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public User changeGeneralInfo(User user) {
-        Optional<User> userExists = userRepository.findByEmail(user.getEmail());
-        User user1= userExists.orElseThrow(()-> new UsernameNotFoundException(String.format("user not found",user.getEmail())));
+    public User changeGeneralInfo(User user,ObjectId userId) {
+        User user1= userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException(String.format("user not found")));
 
         user1.setFullName(user.getFullName());
         user1.setBio(user.getBio());
@@ -109,6 +109,27 @@ public class UserService implements UserDetailsService {
         User user1= userExists.orElseThrow(()-> new UsernameNotFoundException(String.format("user not found")));
         return  user1;
     }
+    public User follow(User user, ObjectId userId) {
+        User user1= userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException(String.format("user not found")));
+        Set<ObjectId> userFollowings = user.getFollowings();
+        Set<ObjectId> userFollowers = user1.getFollowers();
+        for (ObjectId id : userFollowings){
+            if(id.equals(userId)){
+                userFollowings.remove(id);
+                for (ObjectId fid : userFollowers){
+                    if(fid.equals(user.getUserId())){
+                        userFollowers.remove(fid);
+                        userRepository.save(user);
+                        return userRepository.save(user1);
+                    }
+                }
+            }
+        }
+        userFollowers.add(user.getUserId());
+        userFollowings.add(userId);
+        userRepository.save(user);
+        return userRepository.save(user1);
+    }
 
     public void deleteUser(ObjectId userId) {
         userRepository.deleteById(userId);
@@ -116,14 +137,10 @@ public class UserService implements UserDetailsService {
 
     private String randomName(){
         String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "abcdefghijklmnopqrstuvxyz";
-
         StringBuilder sb = new StringBuilder(10);
-
         for (int i = 0; i < 10; i++) {
             int index = (int)(AlphaNumericString.length() * Math.random());
-
-            sb.append(AlphaNumericString
-                    .charAt(index));
+            sb.append(AlphaNumericString.charAt(index));
         }
         return sb.toString();
     }
@@ -257,7 +274,5 @@ public class UserService implements UserDetailsService {
                 "</div></div>";
     }
 
-//    public User follow(User user, ObjectId userId) {
-//
-//    }
+
 }

@@ -25,11 +25,7 @@ public class Category {
     @Field(value = "categoryName")
     @Indexed
     private String CategoryName;
-    @DBRef
-    @JsonIgnore
-    private Set<Post> posts = new HashSet<>();
-    @DBRef
-    private Set<User> users = new HashSet<>();
+
 
     public Category(String categoryName) {
         CategoryName = categoryName;

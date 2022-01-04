@@ -33,7 +33,7 @@ public class Post {
     @DBRef
     private String thumbnail;
     @DBRef
-    private List<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();;
     @DBRef
     @Indexed
     private User user;

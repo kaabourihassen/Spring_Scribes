@@ -56,7 +56,10 @@ public class User implements UserDetails {
     private Role role;
 
     @JsonSerialize(using= ToStringSerializer.class)
-    private Set<ObjectId> follows = new HashSet<>();
+    private Set<ObjectId> followers = new HashSet<>();
+
+    @JsonSerialize(using= ToStringSerializer.class)
+    private Set<ObjectId> followings = new HashSet<>();
 
     @DBRef
     private Set<Category> favoriteCategories = new HashSet<>();

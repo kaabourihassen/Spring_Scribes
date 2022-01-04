@@ -78,9 +78,9 @@ public class UserController {
     public User getUserById(@PathVariable ObjectId userId){
         return userService.getUserById(userId);
     }
-    @PutMapping(path = "/user/updateUser")
-    public User UpdateUser(@RequestBody User user){
-        return userService.changeGeneralInfo(user);
+    @PutMapping(path = "/user/updateUser/{userId}")
+    public User UpdateUser(@RequestBody User user,@PathVariable ObjectId userId){
+        return userService.changeGeneralInfo(user,userId);
     }
     @DeleteMapping(path = "/user/{userId}")
     public void deleteUser(@PathVariable ObjectId userId){
