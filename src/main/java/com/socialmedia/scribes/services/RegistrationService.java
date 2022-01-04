@@ -8,6 +8,7 @@ import com.socialmedia.scribes.repositories.EmailSender;
 import com.socialmedia.scribes.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +96,27 @@ public class RegistrationService {
         userService.enableUser(confirmationToken.getUser());
         return "confirmed";
     }
+    public User changeloggedPassword(String email,String newPassword) {
+        Optional<User> userExists = userRepository.findByEmail(email);
+        User user1= userExists.orElseThrow(()-> new UsernameNotFoundException(String.format("user not found",email)));
 
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
+
+        user1.setPassword(encodedPassword);
+
+        return userRepository.save(user1);
+    }
+    public String changePassword(String email,String newPassword) {
+        Optional<User> userExists = userRepository.findByEmail(email);
+        User user1= userExists.orElseThrow(()-> new UsernameNotFoundException(String.format("user not found",email)));
+
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
+
+        user1.setPassword(encodedPassword);
+
+        userRepository.save(user1);
+        return "changed";
+    }
     private String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +

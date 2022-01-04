@@ -62,8 +62,8 @@ public class PostController {
         User user = userService.loadUserByUsername(jwtUtils.getEmailFromJwtToken(token));
         return postService.updatePost(user,post,multipartFile);
     }
-    @DeleteMapping(path ="/post")
-    public void deletePost(@RequestParam ObjectId postId){
+    @DeleteMapping(path ="/post/{postId}")
+    public void deletePost(@PathVariable ObjectId postId){
         postService.deletePost(postId);
     }
     @PostMapping(path ="/post/{postId}")

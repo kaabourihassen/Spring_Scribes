@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +35,6 @@ public class UserService implements UserDetailsService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
     private ConfirmationTokenService confirmationTokenService;
     private static final String UPLOAD_DIR =".\\src\\main\\resources\\static\\imagesuploads\\userImages\\";
 
@@ -50,17 +50,7 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public String changePassword(String email,String newPassword) {
-        Optional<User> userExists = userRepository.findByEmail(email);
-        User user1= userExists.orElseThrow(()-> new UsernameNotFoundException(String.format("user not found",email)));
 
-        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
-
-        user1.setPassword(encodedPassword);
-
-        userRepository.save(user1);
-        return "changed";
-    }
 
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
